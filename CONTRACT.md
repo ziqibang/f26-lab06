@@ -27,10 +27,27 @@ consumer always passes 4 arguments, so every call still goes to the original
 
 **The result.** What the build printed for each module.
 
+```
+lab06-api       Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+lab06-consumer  Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+lab06-booking-parent ... SUCCESS
+lab06-api .............. SUCCESS
+lab06-consumer ......... SUCCESS
+BUILD SUCCESS
+```
+
 **If your prediction was wrong,** say what you missed.
+
+My prediction was right.
 
 **Is an additive change always safe in Java?** One case where adding something
 to an API still breaks a caller, if you can name one.
+
+An additive change is not always safe, because if the additive change is being
+implemented by another class that you cannot edit, adding the new function to
+the interface would break the other class at compile time. The additive change
+in adding a function is only safe for code that calls it, but not for a class
+that implements it.
 
 ---
 
