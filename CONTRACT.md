@@ -109,6 +109,10 @@ Reactor summary:
 **Which module's tests ran, and which did not.** And what that tells you about
 who can detect a contract break.
 
+The api tests ran and passed, but the consumer tests didn't run because it
+didn't compile. This says that the api tests will not notice the contract
+broke, but modules that actually call the api will.
+
 ### Step 2: the deprecation path
 
 **What you added.** The signatures that came back, and what they delegate to.
