@@ -58,10 +58,20 @@ that implements it.
 **Will the untouched consumer still compile and pass?** Yes or no, and if no,
 which module goes red and whether at compile time or test time.
 
+The consumer will not compile and pass. The consumer module fails at compile
+time, in `FrontDesk.java`, because the methods it calls were removed.
+
 **Where.** Name the call sites you expect to be affected, if any.
+
+The affected call sites are `FrontDesk.java:27` and `FrontDesk.java:33`, the
+two `createBooking` calls.
 
 **What about the tests in `api/`, after you update them?** And whether their
 result is evidence about the consumer.
+
+The tests in api/ should compile and pass if everything is done correctly, but
+that is not evidence about the consumer, because the api tests only call the
+new method and never run the consumer's code.
 
 ### Step 1: after the fold
 
