@@ -189,20 +189,47 @@ Not coded. One misuse, one redesign, one cost. Discuss it with your TA.
 
 **What is easy to get wrong.** One specific thing about the API surface.
 
+`cancelBooking(long bookingId, boolean notifyWaitlist)` takes a bare boolean,
+so at the call site you only see `true` or `false` and nothing says what it
+means.
+
 **The call site.** File and line in `consumer/`, with the call. Show the
 code that a reader cannot understand without opening the javadoc, or that a
 caller could get wrong with the compiler still happy.
 
+`FrontDesk.java:48` `api.cancelBooking(bookingId, true)` and
+`FrontDesk.java:53` `api.cancelBooking(bookingId, false)`. Reading line 53
+alone, you can't tell what `false` means without opening the javadoc.
+
 **What goes wrong when it happens.** Silent bad behavior, wrong data, a crash
 somewhere far away?
+
+If the two values are swapped, the compiler accepts it and nothing crashes.
+The behavior is silently wrong: with `false` by mistake, the room frees up but
+the waitlisted guest is never promoted; with `true` by mistake, a desk
+correction gives the room away to someone on the waitlist.
 
 ### The redesign
 
 **The proposal.** Types, enums, factories, or whatever you are proposing. Show
 the new signature and the new call site.
 
+Replace the boolean with an enum:
+
+```java
+public enum CancelMode { PROMOTE_WAITLIST, QUIET }
+boolean cancelBooking(long bookingId, CancelMode mode);
+```
+
+New call sites: `api.cancelBooking(bookingId, CancelMode.PROMOTE_WAITLIST)`
+and `api.cancelBooking(bookingId, CancelMode.QUIET)`.
+
 **Why the mistake is now hard or impossible to make.** Point at the mechanism,
 such as the compiler, a validating constructor, or an exhaustive switch.
+
+The compiler enforces it. The parameter's type is `CancelMode`, so passing
+`true` or `false` doesn't compile, and each call says what it does without
+needing the javadoc.
 
 ### One tradeoff
 
@@ -210,4 +237,11 @@ such as the compiler, a validating constructor, or an exhaustive switch.
 against the deprecation path you just built, or more types for a newcomer to
 learn. "No real downside" does not count.
 
+It's another breaking change. Removing `cancelBooking(long, boolean)` breaks
+`FrontDesk.java:48` and `:53`, just like step 1 did. We'd need another
+deprecation path, and the consumer team has to migrate a second time.
+
 **When the price is worth paying.** A condition under which it is.
+
+When there are many callers we don't control and a wrong value causes silent
+damage, like a guest losing a room, instead of a crash someone would notice.
