@@ -117,8 +117,48 @@ broke, but modules that actually call the api will.
 
 **What you added.** The signatures that came back, and what they delegate to.
 
+Both old signatures came back on `BookingApi` as `@Deprecated` default methods.
+Each builds a `BookingRequest` and delegates to `createBooking(BookingRequest)`:
+
+```java
+@Deprecated
+default Booking createBooking(String roomId, long startMinute, long endMinute,
+                              String waitlistKey) {
+    return createBooking(new BookingRequest(roomId, startMinute, endMinute)
+            .withWaitlistKey(waitlistKey));
+}
+
+@Deprecated
+default Booking createBooking(String roomId, long startMinute, long endMinute,
+                              String waitlistKey, String notes) {
+    return createBooking(new BookingRequest(roomId, startMinute, endMinute)
+            .withWaitlistKey(waitlistKey).withNotes(notes));
+}
+```
+
 **The warnings.** Paste one deprecation warning line from the build log (from
 a `mvn -B clean test` run, since a rerun with nothing to compile prints none).
+
+```
+[WARNING] /C:/Users/ziqix/Downloads/f26-lab06/consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[27,19] createBooking(java.lang.String,long,long,java.lang.String) in edu.cmu.cs214.booking.BookingApi has been deprecated
+```
+
+What changed in the build output compared with step 1 (`mvn -B clean test`):
+
+```
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0          (lab06-api, same as step 1)
+[WARNING] .../FrontDesk.java:[27,19] createBooking(java.lang.String,long,long,java.lang.String) in edu.cmu.cs214.booking.BookingApi has been deprecated
+[WARNING] .../FrontDesk.java:[33,19] createBooking(java.lang.String,long,long,java.lang.String) in edu.cmu.cs214.booking.BookingApi has been deprecated
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0          (lab06-consumer, now compiles and runs)
+[INFO] lab06-booking-parent ............................... SUCCESS
+[INFO] lab06-api .......................................... SUCCESS
+[INFO] lab06-consumer ..................................... SUCCESS
+[INFO] BUILD SUCCESS
+```
+
+The two compile errors at `FrontDesk.java:27` and `:33` became two
+deprecation warnings at the same lines, and the consumer's 7 tests ran and
+passed.
 
 **What the deprecation path resolves.** Who can now build that could not build
 during step 1, and who is on which schedule.
