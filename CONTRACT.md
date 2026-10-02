@@ -13,8 +13,15 @@ Keep it short and specific. Point at methods, call sites, and error text.
 
 **Will the consumer, untouched, still compile and pass?** Yes or no.
 
+Yes, the consumer will still compile and pass.
+
 **Why.** What does the compiler do with the consumer's existing call sites once
 the new overload exists?
+
+The compiler will check the consumer's call against the two different versions
+and see how many arguments it has and match it to the respective function. The
+consumer always passes 4 arguments, so every call still goes to the original
+4-parameter method, and nothing changes for them.
 
 ### What happened
 
