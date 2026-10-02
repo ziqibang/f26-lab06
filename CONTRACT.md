@@ -163,8 +163,21 @@ passed.
 **What the deprecation path resolves.** Who can now build that could not build
 during step 1, and who is on which schedule.
 
+The deprecation path resolves old methods that are supposed to be replaced but
+some callers might still be calling using the old signature. It lets them keep
+compiling but warns them that there has been a change. After step 1 the
+consumer could not build at all; now it builds and its tests pass. The api team
+can ship `BookingRequest` now, and the consumer team can move their calls over
+on their own schedule, before the old methods are removed.
+
 **What the warnings accomplish that a README note would not.** Be concrete
 about where the warning shows up and who sees it without looking for it.
+
+A warning makes it easier for people to see what's wrong. It shows up in the
+consumer's own build log every time they compile, at the exact file and line
+(`FrontDesk.java:27` and `:33`), so the developers calling the old method see
+it without looking for it. A README note only helps someone who goes and reads
+it, and the consumer team might never open our README.
 
 ---
 
